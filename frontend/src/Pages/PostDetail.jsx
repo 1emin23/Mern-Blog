@@ -1,11 +1,45 @@
 import { useParams } from "react-router-dom";
 import axios from "axios";
 import { useEffect, useState } from "react";
+import { useAuth } from "../Context/AuthContext";
 
 export const PostDetail = () => {
-  const { id } = useParams(); // ✅ URL'den id'yi alıyoruz
+  const { id } = useParams();
   const [post, setPost] = useState(null);
   const [loading, setLoading] = useState(true);
+  const { user } = useAuth();
+
+  const handleCommentEvent = (e) => {
+    console.log("user is ", user.id);
+
+    e.preventDefault();
+    let userComment = e.target.comment;
+    if (!userComment.value) return;
+    console.log("userComment", userComment.value);
+    try {
+      axios
+        .post(`http://localhost:4000/post/comment/${id}`, {
+          userId: user.id,
+          comment: userComment.value,
+        })
+        .then((res) => {
+          console.log("res: ", res);
+          setPost((prevPost) => ({
+            ...prevPost,
+            comments: res.data.comments,
+          }));
+        })
+        .catch((err) => {
+          console.log("error:", err);
+        });
+    } catch (error) {
+      console.log(
+        "istek atarken bir sorun olsutu belki network belki de baska bir sey",
+        error
+      );
+    }
+    userComment.value = "";
+  };
 
   useEffect(() => {
     axios
@@ -42,10 +76,11 @@ export const PostDetail = () => {
       )}
 
       {/* Yorum Ekleme Alanı */}
-      <form className="mt-6">
+      <form className="mt-6" onSubmit={handleCommentEvent}>
         <textarea
           className="w-full border p-2 rounded"
           placeholder="Yorumunuzu yazın..."
+          name="comment"
         />
         <button
           type="submit"

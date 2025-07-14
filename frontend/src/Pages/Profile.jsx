@@ -43,12 +43,7 @@ export const Profile = () => {
 
       <h2 className="text-xl font-bold my-4">Yorum Yapılan Gönderiler</h2>
       {commentedPosts.length > 0 ? (
-        commentedPosts.map((post) => (
-          <div key={post._id} className="mb-4 p-4 border rounded shadow">
-            <h3 className="font-semibold">{post.title}</h3>
-            <p>{post.content.slice(0, 100)}...</p>
-          </div>
-        ))
+        commentedPosts.map((post) => <Post key={post._id} post={post} />)
       ) : (
         <p>Henüz yorum yapılan gönderi yok.</p>
       )}

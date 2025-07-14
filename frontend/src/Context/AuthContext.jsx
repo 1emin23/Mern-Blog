@@ -7,6 +7,7 @@ export const AuthProvider = ({ children }) => {
   console.log("authProvider içindeyim");
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const checkAuth = async () => {
     const access_token = window.localStorage.getItem("access token");
 
