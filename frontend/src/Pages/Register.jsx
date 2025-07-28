@@ -41,16 +41,13 @@ export const Register = () => {
     const username = e.target.elements.username.value;
     const plainPassword = e.target.elements.password.value;
     const email = e.target.elements.email.value;
+    console.log("data:", { username, plainPassword, email });
     try {
-      const res = await axios.post(
-        "http://localhost:4000/api/register",
-        {
-          username,
-          password: plainPassword,
-          email,
-        },
-        { withCredentials: true }
-      );
+      const res = await axios.post("http://localhost:4000/api/register", {
+        username,
+        password: plainPassword,
+        email,
+      });
       console.log(res, "resf from backend api");
       if (res.status === 200) {
         window.localStorage.setItem("access token", res.data.token);
@@ -64,6 +61,7 @@ export const Register = () => {
           progress: undefined,
           theme: darkMode ? "dark" : "light",
         });
+        window.location.href = "/";
       } else {
         toast.error(res.error, {
           position: "top-right",

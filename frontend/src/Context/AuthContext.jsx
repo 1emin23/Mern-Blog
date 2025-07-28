@@ -10,6 +10,7 @@ export const AuthProvider = ({ children }) => {
 
   const checkAuth = async () => {
     const access_token = window.localStorage.getItem("access token");
+    console.log("access_token in the authContext:", access_token);
 
     if (!access_token) {
       console.log("access token yok, setUser(null)");

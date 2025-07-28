@@ -1,5 +1,5 @@
 import { Calendar, Heart, MessageSquareMore } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import { useContext } from "react";
@@ -12,7 +12,26 @@ export const Post = ({ post }) => {
   const { darkMode } = useContext(ThemeContext);
   let [likeCount, setLikeCount] = useState(post?.likes.length || 0);
   const [isLiked, setIsLiked] = useState(post?.likes.includes(user?.id));
+
   const navigate = useNavigate();
+
+  const content = useRef(null);
+  const [isOverflowing, setIsOverflowing] = useState(content.current);
+
+  useEffect(() => {
+    console.log("content.current.clientHeight:", content.current.clientHeight);
+    console.log(content.current.scrollHeight > content.current.clientHeight);
+    if (content.current.scrollHeight > content.current.clientHeight) {
+      content.current = "hidden";
+      setIsOverflowing(true);
+    } else {
+      content.current = "visible";
+      setIsOverflowing(false);
+    }
+    console.log("content.current:", content.current);
+  });
+
+  console.log("content.current:", content.current);
 
   console.log("likeCount", likeCount);
 
@@ -104,7 +123,21 @@ export const Post = ({ post }) => {
 
       <h2 className="text-xl font-semibold mb-2">{post?.title}</h2>
 
-      <p>{post?.content}</p>
+      <p ref={content} className="max-h-48 overflow-y-hidden">
+        {isOverflowing}
+        {content.current === "hidden" ? "hidden content" : "visible content"}
+        <br />
+
+        {post?.content}
+        <br />
+      </p>
+      {content.current === "hidden" ? (
+        <a href="" className="text-blue-900 underline underline-offset-4">
+          devamını goster
+        </a>
+      ) : (
+        "tamamı bu"
+      )}
 
       <div className="sm:flex-row sm:items-center flex flex-col items-start justify-between gap-2 mt-2 text-gray-600 dark:text-gray-400 text-sm">
         <p className="flex gap-1 items-center">

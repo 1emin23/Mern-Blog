@@ -2,26 +2,31 @@
 import { useAuth } from "../context/AuthContext";
 import { useState } from "react";
 import axios from "axios";
+import { useEffect } from "react";
 
 export const Settings = () => {
-  const { user, setUser } = useAuth();
+  const { user, setUser, loading } = useAuth();
   const [username, setUsername] = useState(user?.username || "");
-  const [email, setEmail] = useState(user?.email || "");
   const [password, setPassword] = useState("");
   const [success, setSuccess] = useState("");
 
+  useEffect(() => {
+    if (user) {
+      setUsername(user.username);
+    }
+  }, [user]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (!password) return;
+
     try {
-      const res = await axios.put(
-        "http://localhost:4000/api/user/update",
-        {
-          username,
-          email,
-          ...(password ? { password } : {}), // Şifre boşsa gönderme
-        },
-        { withCredentials: true }
-      );
+      const res = await axios.put("http://localhost:4000/api/update", {
+        userId: user?.id,
+        username,
+        password,
+      });
+      console.log("res from ", res);
 
       setUser(res.data.updatedUser); // Yeni bilgileri context'e yaz
       setSuccess("Bilgiler başarıyla güncellendi.");
@@ -31,6 +36,7 @@ export const Settings = () => {
       setSuccess("Güncelleme başarısız.");
     }
   };
+  if (loading) return <div>Yukleniyor .... {loading} </div>;
 
   if (!user)
     return <div className="text-center mt-10">Giriş yapmalısınız.</div>;
@@ -46,17 +52,6 @@ export const Settings = () => {
             className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
-            required
-          />
-        </div>
-
-        <div>
-          <label className="block mb-1">Email</label>
-          <input
-            type="email"
-            className="w-full p-2 border rounded dark:bg-gray-800 dark:border-gray-600"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
             required
           />
         </div>

@@ -36,7 +36,7 @@ exports.registerUser = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "7d" }
     );
-    req.user = { username: user.username, id: user._id };
+    req.user = { username: newUser.username, id: newUser._id };
 
     return res.status(200).json({
       message: "Giriş başarılı",
@@ -92,5 +92,31 @@ exports.verifyToken = (req, res) => {
       return res.status(401).json({ message: "Token süresi dolmuş" });
     }
     return res.status(404).json({ message: "Token doğrulama hatası" });
+  }
+};
+
+exports.updateUser = async (req, res) => {
+  const { userId, username, password } = req.body;
+  console.log({ userId, username, password });
+
+  try {
+    const user = User.findByIdAndUpdate(userId);
+    const hash = await bcrypt.hash(password, 10);
+    if (!user)
+      return res
+        .status(404)
+        .json({ message: "Boyle bir kullanıcı bulunamadı" });
+
+    const updatedUser = await user.findByIdAndUpdate(
+      userId,
+      { username, password: hash },
+      {
+        new: true,
+      }
+    );
+    return res.status(200).json(updatedUser);
+  } catch (error) {
+    console.log("error", error);
+    return res.json({ message: "sunucu hatası" });
   }
 };

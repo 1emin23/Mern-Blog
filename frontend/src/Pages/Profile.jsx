@@ -30,13 +30,7 @@ export const Profile = () => {
     <div className="p-4 max-w-3xl mx-auto">
       <h2 className="text-xl font-bold mb-4">Beğenilen Gönderiler</h2>
       {likedPosts.length > 0 ? (
-        likedPosts.map((post) => (
-          <Post key={post._id} post={post} />
-          // <div key={post._id} className="mb-4 p-4 border rounded shadow">
-          //   <h3 className="font-semibold">{post.title}</h3>
-          //   <p>{post.content.slice(0, 100)}...</p>
-          // </div>
-        ))
+        likedPosts.map((post) => <Post key={post._id} post={post} />)
       ) : (
         <p>Henüz beğenilen gönderi yok.</p>
       )}

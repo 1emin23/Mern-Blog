@@ -76,19 +76,33 @@ export const PostDetail = () => {
       )}
 
       {/* Yorum Ekleme Alanı */}
-      <form className="mt-6" onSubmit={handleCommentEvent}>
-        <textarea
-          className="w-full border p-2 rounded"
-          placeholder="Yorumunuzu yazın..."
-          name="comment"
-        />
-        <button
-          type="submit"
-          className="bg-blue-500 text-white px-4 py-1 mt-2 rounded"
-        >
-          Gönder
-        </button>
-      </form>
+      {/* kullanıcı giris yapmıs mı?  */}
+      {user ? (
+        <form className="mt-6" onSubmit={handleCommentEvent}>
+          <textarea
+            className="w-full border p-2 rounded"
+            placeholder="Yorumunuzu yazın..."
+            name="comment"
+          />
+          <button
+            type="submit"
+            className="bg-blue-500 text-white px-4 py-1 mt-2 rounded"
+          >
+            Gönder
+          </button>
+        </form>
+      ) : (
+        <div>
+          <span>Yorum yapmak için </span>
+          <a
+            href="/login"
+            className="text-blue-900 underline underline-offset-6"
+          >
+            giriş
+          </a>
+          <span> yapınız</span>
+        </div>
+      )}
     </div>
   );
 };
