@@ -1,5 +1,5 @@
 import { Calendar, Heart, MessageSquareMore } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useAuth } from "../Context/AuthContext";
 import { toast, ToastContainer } from "react-toastify";
 import { useContext } from "react";
@@ -14,26 +14,39 @@ export const Post = ({ post }) => {
   const [isLiked, setIsLiked] = useState(post?.likes.includes(user?.id));
 
   const navigate = useNavigate();
-
   const content = useRef(null);
-  const [isOverflowing, setIsOverflowing] = useState(content.current);
+  const [isOverflowing, setIsOverflowing] = useState(
+    content.current === "overflow" ? true : false
+  );
+  const [showContentBtn, setShowContentBtn] = useState(false);
 
-  useEffect(() => {
-    console.log("content.current.clientHeight:", content.current.clientHeight);
-    console.log(content.current.scrollHeight > content.current.clientHeight);
+  useLayoutEffect(() => {
     if (content.current.scrollHeight > content.current.clientHeight) {
-      content.current = "hidden";
+      content.current = "overflow";
       setIsOverflowing(true);
     } else {
       content.current = "visible";
       setIsOverflowing(false);
     }
-    console.log("content.current:", content.current);
-  });
+  }, []);
 
-  console.log("content.current:", content.current);
+  const handleShowMoreLessContent = (e) => {
+    console.log("fonksiyon basında showContentBtn degeri:", showContentBtn);
 
-  console.log("likeCount", likeCount);
+    setShowContentBtn((prev) => {
+      let newState = !prev;
+      if (newState) {
+        e.target.parentElement.children[2].className = "min-h-30 ";
+        content.current = "visible";
+      } else {
+        e.target.parentElement.children[2].className =
+          "max-h-48 overflow-y-hidden";
+        content.current = "hidden";
+      }
+      console.log("fonksiyon sonunda showContentBtn degeri:", showContentBtn);
+      return newState;
+    });
+  };
 
   const handleLikeEvent = () => {
     // check if user is logged in
@@ -124,19 +137,16 @@ export const Post = ({ post }) => {
       <h2 className="text-xl font-semibold mb-2">{post?.title}</h2>
 
       <p ref={content} className="max-h-48 overflow-y-hidden">
-        {isOverflowing}
-        {content.current === "hidden" ? "hidden content" : "visible content"}
-        <br />
-
         {post?.content}
-        <br />
       </p>
-      {content.current === "hidden" ? (
-        <a href="" className="text-blue-900 underline underline-offset-4">
-          devamını goster
-        </a>
-      ) : (
-        "tamamı bu"
+
+      {isOverflowing && (
+        <button
+          onClick={handleShowMoreLessContent}
+          className="text-blue-900 underline underline-offset-4 cursor-pointer"
+        >
+          {showContentBtn ? "daha az göster" : "daha fazla göster"}
+        </button>
       )}
 
       <div className="sm:flex-row sm:items-center flex flex-col items-start justify-between gap-2 mt-2 text-gray-600 dark:text-gray-400 text-sm">
